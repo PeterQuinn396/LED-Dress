@@ -38,6 +38,7 @@ void loop() {
   if (gotTouch()) {                  // check if we got a touch, if we did, change mode
     mode++;
     mode %= total_modes;
+    delete activeEffect; // delete data that will have its reference overwritten, prevent memory leak
     activeEffect = selectActiveEffect(mode);
   }
   activeEffect->update(time_ms);  // continually update the active effect
