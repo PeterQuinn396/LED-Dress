@@ -87,11 +87,10 @@ public:
 
 class BlinkEffect : public Effect {
 
-
 private:
   float period;       // time in ms for pattern to repeat
   float duty_cycle;   // [0-1] how much of the period to be on for
-  float phase_ratio;  // offset a certain amount of the period
+  float phase_ratio;  // [0-1] offset fraction of the period
   uint8_t brightness;
   unsigned long last_time;
   int delay;
