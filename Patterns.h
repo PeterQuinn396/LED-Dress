@@ -4,6 +4,12 @@
 
 class Pattern {
 
+  // Patterns combine multiple effects (expecting 6) in a synchronized way
+  // A Pattern should inherit from Pattern (gives the update method), and its constructor
+  // must take (LEDStrip ledStripArray[], int num_strips) and can optionally take other arguments
+  // to set up the effects in the desired way. The constructor of the derived class must fill in
+  // every element of the effectArray defined in Pattern.
+
 protected:
 
   int num_strips;

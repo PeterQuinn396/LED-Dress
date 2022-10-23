@@ -4,6 +4,11 @@
 
 class Effect {
 
+  // An effect controls the colour/brightness/timing for a single LEDStrip.
+  // An effect should inherit from the abstract base class Effect, which enforces a common interface
+  // for effects. The constructor of the derived class must take an parameters used for running the
+  // effect (ex: freqency, brightness), and the update method must be overridden to acheive the desired effect.
+
 protected:
   LEDStrip ledStrip;
 
