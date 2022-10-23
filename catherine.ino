@@ -9,8 +9,6 @@
 unsigned long last_touch_time = 0;
 
 // LED strip settings
-
-
 #define STRIP_0_WHITE 13
 #define STRIP_0_COLOUR 14
 
@@ -40,8 +38,9 @@ LEDStrip ledStripArray[NUMBER_OF_STRIPS] = {
 };
 
 Pattern* activePattern;
+
+#define TOTAL_MODES 3
 int mode = 0;
-int const total_modes = 2;
 
 void setup() {
   // put your setup code here, to run once:
@@ -57,7 +56,7 @@ void loop() {
   unsigned long time_ms = millis();  // get current time
   if (gotTouch()) {                  // check if we got a touch, if we did, change mode
     mode++;
-    mode %= total_modes;
+    mode %= TOTAL_MODES;
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
     activePattern = selectActivePattern(mode, ledStripArray, NUMBER_OF_STRIPS);
   }
@@ -74,9 +73,16 @@ Pattern* selectActivePattern(int mode, LEDStrip ledStripArray[], int num_strips)
   switch (mode) {
     case 0:
       Serial.println("Selecting mode 0");
-      phase_angle = 0.;
-      frequency = 1.;
       pattern = new SolidWhitePattern(ledStripArray, num_strips, 255);
+      return pattern;
+    case 1:
+      Serial.println("Selecting mode 1");
+      pattern = new SolidColourPattern(ledStripArray, num_strips, 255);
+      return pattern;
+    case 2:
+      Serial.println("Selecting mode 2");
+      int period_ms = 1000;
+      pattern = new SequencePattern(ledStripArray, num_strips, period_ms, 255);
       return pattern;
   }
 }

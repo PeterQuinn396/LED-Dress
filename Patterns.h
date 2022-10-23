@@ -52,10 +52,9 @@ public:
 class SequencePattern : public Pattern {
 
 public:
-  SequencePattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness)
+  SequencePattern(LEDStrip ledStripArray[], int num_strips, int period_ms, uint8_t brightness)
     : Pattern(num_strips) {
 
-    int period_ms = 1000;
     float duty_cycle = 1.0 / num_strips;
     float phase_ratio = 1.0 / num_strips;
 
