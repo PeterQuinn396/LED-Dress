@@ -80,6 +80,43 @@ public:
   }
 };
 
+class BlinkEffect : public Effect {
+
+
+private:
+  float period;       // time in ms for pattern to repeat
+  float duty_cycle;   // [0-1] how much of the period to be on for
+  float phase_ratio;  // offset a certain amount of the period
+  uint8_t brightness;
+  unsigned long last_time;
+  int delay;
+
+public:
+  BlinkEffect(LEDStrip ledStrip, float period_ms, float duty_cycle, float phase_ratio, uint8_t brightness)
+    : Effect(ledStrip), period(period_ms), duty_cycle(duty_cycle), phase_ratio(phase_ratio), brightness(brightness) {
+
+    this->ledStrip.setWhite();
+    this->ledStrip.setBrightness(brightness);
+    this->last_time = 0;
+    this->delay = this->period * this->phase_ratio;
+  }
+
+  void update(unsigned long time_ms) override {
+
+    unsigned long delta = time_ms - this->last_time;
+
+    if (delta < delay) {
+      this->ledStrip.setBrightness(0);
+    } else if (delta < delay + this->period * this->duty_cycle) {  // in the high time of the duty cycle
+      this->ledStrip.setBrightness(this->brightness);
+    } else if (delta < this->period) {  // in the low part of the duty cycle
+      this->ledStrip.setBrightness(0);
+    } else {
+      this->last_time = time_ms;  // time to move to the next period
+    }
+  }
+};
+
 
 class SolidWhiteEffect : public Effect {
 public:

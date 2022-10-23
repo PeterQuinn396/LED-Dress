@@ -9,7 +9,7 @@
 unsigned long last_touch_time = 0;
 
 // LED strip settings
-#define NUMBER_OF_STRIPS 6
+
 
 #define STRIP_0_WHITE 13
 #define STRIP_0_COLOUR 14
@@ -29,7 +29,8 @@ unsigned long last_touch_time = 0;
 #define STRIP_5_WHITE 22
 #define STRIP_5_COLOUR 23
 
-LEDStrip ledStripArray[6] = {
+#define NUMBER_OF_STRIPS 6
+LEDStrip ledStripArray[NUMBER_OF_STRIPS] = {
   LEDStrip(STRIP_0_WHITE, STRIP_0_COLOUR),
   LEDStrip(STRIP_1_WHITE, STRIP_1_COLOUR),
   LEDStrip(STRIP_2_WHITE, STRIP_2_COLOUR),
