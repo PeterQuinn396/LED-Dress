@@ -14,6 +14,7 @@ private:
   uint8_t inactivePin;
 
 public:
+  LEDStrip(){};  // default constructor so empty array can be initialized
   LEDStrip(uint8_t whitePin, uint8_t colourPin)
     : whitePin(whitePin), colourPin(colourPin) {
     this->currentBrightness = 0;

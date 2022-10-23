@@ -8,6 +8,8 @@ protected:
   LEDStrip ledStrip;
 
 public:
+  Effect(){};  // default constructor so an empty array of Effects can be initialized
+
   Effect(LEDStrip ledStrip)
     : ledStrip(ledStrip) {}
   void virtual update(unsigned long time_ms) {}  // takes the current time in millis()

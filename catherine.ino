@@ -29,7 +29,7 @@ unsigned long last_touch_time = 0;
 #define STRIP_5_WHITE 22
 #define STRIP_5_COLOUR 23
 
-LEDStrip stripArray[6] = {
+LEDStrip ledStripArray[6] = {
   LEDStrip(STRIP_0_WHITE, STRIP_0_COLOUR),
   LEDStrip(STRIP_1_WHITE, STRIP_1_COLOUR),
   LEDStrip(STRIP_2_WHITE, STRIP_2_COLOUR),
@@ -48,7 +48,7 @@ void setup() {
 
   // TODO: disable wifi and bluetooth, reduces power draw
 
-  activePattern = selectActivePattern(mode);
+  activePattern = selectActivePattern(mode, ledStripArray, NUMBER_OF_STRIPS);
 }
 
 
@@ -58,14 +58,14 @@ void loop() {
     mode++;
     mode %= total_modes;
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
-    activePattern = selectActivePAttern(mode, stripArray, NUMBER_OF_STRIPS);
+    activePattern = selectActivePattern(mode, ledStripArray, NUMBER_OF_STRIPS);
   }
   activePattern->update(time_ms);  // continually update the active pattern
   delay(1);                        // give processor some chill time, may remove
 }
 
 
-Pattern* selectActivePattern(int mode, LEDStrip[] ledStripArray, int num_strips) {
+Pattern* selectActivePattern(int mode, LEDStrip ledStripArray[], int num_strips) {
   Pattern* pattern;
   float frequency;
   float phase_angle;
@@ -75,21 +75,7 @@ Pattern* selectActivePattern(int mode, LEDStrip[] ledStripArray, int num_strips)
       Serial.println("Selecting mode 0");
       phase_angle = 0.;
       frequency = 1.;
-      pattern = new SolidWhitePattern(ledStripArray, num_strips);
-      return pattern;
-
-    case 1:
-      Serial.println("Selecting mode 1");
-      phase_angle = 0.;
-      frequency = 1.;
-      pattern = new ColourFadePattern(*strip0, frequency, phase_angle);
-      return pattern;
-
-    case 2:
-      Serial.println("Selecting mode 2");
-      frequency = 2;
-      brightness = 200;
-      pattern = new AlternateEffect(*strip0, frequency, brightness);
+      pattern = new SolidWhitePattern(ledStripArray, num_strips, 255);
       return pattern;
   }
 }
