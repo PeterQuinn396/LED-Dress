@@ -46,8 +46,6 @@ public:
   }
 };
 
-
-
 class AlternateEffect : public Effect {
 
   // alternate between white and coloured with a certain frequency
@@ -69,13 +67,38 @@ public:
   void update(unsigned long time_ms) override {
 
     if (time_ms - this->last_time > 1. / frequency * 1000) {
-      this->isWhite = !this->isWhite;   // flip colour
-      this->last_time = time_ms;  // update last time
+      this->isWhite = !this->isWhite;  // flip colour
+      this->last_time = time_ms;       // update last time
       if (isWhite) {
         this->ledStrip.setWhite();
       } else {
         this->ledStrip.setColour();
       }
     }
+  }
+};
+
+
+class SolidWhiteEffect : public Effect {
+public:
+  SolidWhiteEffect(LEDStrip ledStrip, uint8_t brightness)
+    : Effect(ledStrip) {
+    this->ledStrip.setWhite();
+    this->ledStrip.setBrightness(brightness);
+  }
+  void update(unsigned long time_ms) override {
+    return;
+  }
+};
+
+class SolidColourEffect : public Effect {
+public:
+  SolidColourEffect(LEDStrip ledStrip, uint8_t brightness)
+    : Effect(ledStrip) {
+    this->ledStrip.setColour();
+    this->ledStrip.setBrightness(brightness);
+  }
+  void update(unsigned long time_ms) override {
+    return;
   }
 };

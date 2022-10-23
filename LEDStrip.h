@@ -1,3 +1,4 @@
+#include "esp32-hal-gpio.h"
 #pragma once
 
 class LEDStrip {
@@ -16,6 +17,8 @@ public:
   LEDStrip(uint8_t whitePin, uint8_t colourPin)
     : whitePin(whitePin), colourPin(colourPin) {
     this->currentBrightness = 0;
+    pinMode(whitePin, OUTPUT);  // set pin mode to output, (defaults to output typically, but good practice)
+    pinMode(colourPin, OUTPUT);
     analogWrite(this->whitePin, 0);  // set both pins to low, so strip starts off
     analogWrite(this->colourPin, 0);
     setWhite();  // set the strip to start as white
