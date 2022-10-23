@@ -58,9 +58,9 @@ public:
     int period_ms = 1000;
     float duty_cycle = 1.0 / num_strips;
     float phase_ratio = 1.0 / num_strips;
-    uint8_t brightness = 255;
+
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i*phase_ratio, brightness);
+      effectArray[i] = BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i * phase_ratio, brightness);
     }
   }
-}
+};
