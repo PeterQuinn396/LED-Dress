@@ -103,17 +103,24 @@ public:
     this->ledStrip.setBrightness(brightness);
     this->last_time = 0;
     this->delay = this->period * this->phase_ratio;
+
+    Serial.println("Built blink effect");
   }
 
   void update(unsigned long time_ms) override {
+    Serial.println("Updating blink effect");
 
     unsigned long delta = time_ms - this->last_time;
+    
 
     if (delta < delay) {
+      Serial.println("Set low");
       this->ledStrip.setBrightness(0);
     } else if (delta < delay + this->period * this->duty_cycle) {  // in the high time of the duty cycle
+      Serial.println("Set high");
       this->ledStrip.setBrightness(this->brightness);
     } else if (delta < this->period) {  // in the low part of the duty cycle
+      Serial.println("Set low");
       this->ledStrip.setBrightness(0);
     } else {
       this->last_time = time_ms;  // time to move to the next period
@@ -128,8 +135,10 @@ public:
     : Effect(ledStrip) {
     this->ledStrip.setWhite();
     this->ledStrip.setBrightness(brightness);
+    Serial.println("Built solid white effect");
   }
   void update(unsigned long time_ms) override {
+    Serial.println("updating solid white effect");
     return;
   }
 };
@@ -142,6 +151,7 @@ public:
     this->ledStrip.setBrightness(brightness);
   }
   void update(unsigned long time_ms) override {
+    
     return;
   }
 };

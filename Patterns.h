@@ -1,3 +1,4 @@
+#include "HardwareSerial.h"
 #pragma once
 #include "Effects.h"
 #include "LEDStrip.h"
@@ -13,18 +14,19 @@ class Pattern {
 protected:
 
   int num_strips;
-  Effect* effectArray;
+  Effect** effectArray;
 
 public:
   Pattern(int num_strips)  // must be overridden in derived classes to create the appropirate
                            // effectArray from additional args in the constructor
     : num_strips(num_strips) {
-    effectArray = new Effect[num_strips];
+    this->effectArray = new Effect*[num_strips];
   }
 
   void update(unsigned long tims_ms) {  // takes current time in ms
+    //Serial.println("Updating pattern");
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i].update(tims_ms);
+      this->effectArray[i]->update(tims_ms);
     }
   }
 
@@ -39,7 +41,7 @@ public:
   SolidWhitePattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness)
     : Pattern(num_strips) {
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = SolidWhiteEffect(ledStripArray[i], brightness);
+      effectArray[i] = new SolidWhiteEffect(ledStripArray[i], brightness);
     }
   }
 };
@@ -50,7 +52,7 @@ public:
   SolidColourPattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness)
     : Pattern(num_strips) {
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = SolidColourEffect(ledStripArray[i], brightness);
+      effectArray[i] = new SolidColourEffect(ledStripArray[i], brightness);
     }
   }
 };
@@ -65,7 +67,17 @@ public:
     float phase_ratio = 1.0 / num_strips;
 
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i * phase_ratio, brightness);
+      effectArray[i] = new BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i * phase_ratio, brightness);
+    }
+  }
+};
+
+class WavePattern : public Pattern {
+public:
+  WavePattern(LEDStrip ledStripArray[], int num_strips, float frequency)
+    : Pattern(num_strips) {
+    for (int i = 0; i < num_strips; i++) {
+      effectArray[i] = new WhiteFadeEffect(ledStripArray[i], frequency, i * 360.0 / num_strips);
     }
   }
 };

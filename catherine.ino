@@ -27,19 +27,19 @@ unsigned long last_touch_time = 0;
 #define STRIP_5_WHITE 22
 #define STRIP_5_COLOUR 23
 
-#define NUMBER_OF_STRIPS 6
+#define NUMBER_OF_STRIPS 2
 LEDStrip ledStripArray[NUMBER_OF_STRIPS] = {
   LEDStrip(STRIP_0_WHITE, STRIP_0_COLOUR),
   LEDStrip(STRIP_1_WHITE, STRIP_1_COLOUR),
-  LEDStrip(STRIP_2_WHITE, STRIP_2_COLOUR),
-  LEDStrip(STRIP_3_WHITE, STRIP_3_COLOUR),
-  LEDStrip(STRIP_4_WHITE, STRIP_4_COLOUR),
-  LEDStrip(STRIP_5_WHITE, STRIP_5_COLOUR),
+  //LEDStrip(STRIP_2_WHITE, STRIP_2_COLOUR),
+  //LEDStrip(STRIP_3_WHITE, STRIP_3_COLOUR),
+  //LEDStrip(STRIP_4_WHITE, STRIP_4_COLOUR),
+  //LEDStrip(STRIP_5_WHITE, STRIP_5_COLOUR),
 };
 
 Pattern* activePattern;
 
-#define TOTAL_MODES 3
+#define TOTAL_MODES 4
 int mode = 0;
 
 void setup() {
@@ -81,8 +81,11 @@ Pattern* selectActivePattern(int mode, LEDStrip ledStripArray[], int num_strips)
       return pattern;
     case 2:
       Serial.println("Selecting mode 2");
-      int period_ms = 1000;
-      pattern = new SequencePattern(ledStripArray, num_strips, period_ms, 255);
+      pattern = new SequencePattern(ledStripArray, num_strips, 1000, 255);
+      return pattern;
+    case 3:
+      Serial.println("Selecting mode 3");
+      pattern = new WavePattern(ledStripArray, num_strips, 1.);
       return pattern;
   }
 }
@@ -90,6 +93,7 @@ Pattern* selectActivePattern(int mode, LEDStrip ledStripArray[], int num_strips)
 bool gotTouch() {
   // check if the touch sensor has been triggered
   int val = touchRead(TOUCH_PIN);
+  // Serial.println(val);
   unsigned long current_time = millis();
   if (val < TOUCH_THRESHOLD && current_time - last_touch_time > TOUCH_DELAY_MS) {
     last_touch_time = current_time;
