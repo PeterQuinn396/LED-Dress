@@ -67,26 +67,36 @@ void loop() {
 
 Pattern* selectActivePattern(int mode, LEDStrip ledStripArray[], int num_strips) {
   Pattern* pattern;
-  float frequency;
-  float phase_angle;
-  uint8_t brightness;
   switch (mode) {
     case 0:
-      Serial.println("Selecting mode 0");
-      pattern = new SolidWhitePattern(ledStripArray, num_strips, 255);
-      return pattern;
+      {
+        uint8_t brightness = 255;
+        Serial.println("Selecting mode 0");
+        pattern = new SolidWhitePattern(ledStripArray, num_strips, brightness);
+        return pattern;
+      }
     case 1:
-      Serial.println("Selecting mode 1");
-      pattern = new SolidColourPattern(ledStripArray, num_strips, 255);
-      return pattern;
+      {
+        uint8_t brightness = 255;
+        Serial.println("Selecting mode 1");
+        pattern = new SolidColourPattern(ledStripArray, num_strips, 255);
+        return pattern;
+      }
     case 2:
-      Serial.println("Selecting mode 2");
-      pattern = new SequencePattern(ledStripArray, num_strips, 1000, 255);
-      return pattern;
+      {
+        Serial.println("Selecting mode 2");
+        int period_ms = 1000;
+        uint8_t brightness = 255;
+        pattern = new SequencePattern(ledStripArray, num_strips, period_ms, brightness);
+        return pattern;
+      }
     case 3:
-      Serial.println("Selecting mode 3");
-      pattern = new WavePattern(ledStripArray, num_strips, 1.);
-      return pattern;
+      {
+        Serial.println("Selecting mode 3");
+        float frequency = 1.;  // Hz
+        pattern = new WavePattern(ledStripArray, num_strips, frequency);
+        return pattern;
+      }
   }
 }
 
