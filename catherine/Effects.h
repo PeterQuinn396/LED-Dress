@@ -20,7 +20,7 @@ public:
   void virtual update(unsigned long time_ms) {}  // takes the current time in millis()
 };
 
-class WhiteFadeEffect : public Effect {
+class FadeEffect : public Effect {
 
   // fade on and off
 
@@ -30,9 +30,16 @@ private:
 
 public:
 
-  WhiteFadeEffect(LEDStrip ledStrip, float frequency, float phase_angle)
+  FadeEffect(LEDStrip ledStrip, float frequency, float phase_angle, bool is_white)
     : Effect(ledStrip), frequency(frequency), phase_angle(phase_angle) {
-    this->ledStrip.setWhite();
+
+    if (is_white) {
+      Serial.println("Built white fade");
+      this->ledStrip.setWhite();
+    } else {
+      Serial.println("Built colour fade");
+      this->ledStrip.setColour();
+    }
   }
 
   void update(unsigned long time_ms) override {
@@ -45,13 +52,6 @@ public:
   }
 };
 
-class ColourFadeEffect : public WhiteFadeEffect {  // 99% same as white, so just inherit
-public:
-  ColourFadeEffect(LEDStrip ledStrip, float frequency, int phase_angle)
-    : WhiteFadeEffect(ledStrip, frequency, phase_angle) {
-    this->ledStrip.setColour();  // set to colour in constructor, instead of white
-  }
-};
 
 class AlternateEffect : public Effect {
 
@@ -94,12 +94,16 @@ private:
   uint8_t brightness;
   unsigned long last_time;
   int delay;
+  bool is_white;
 
 public:
-  BlinkEffect(LEDStrip ledStrip, float period_ms, float duty_cycle, float phase_ratio, uint8_t brightness)
-    : Effect(ledStrip), period(period_ms), duty_cycle(duty_cycle), phase_ratio(phase_ratio), brightness(brightness) {
+  BlinkEffect(LEDStrip ledStrip, float period_ms, float duty_cycle, float phase_ratio, uint8_t brightness, bool is_white)
+    : Effect(ledStrip), period(period_ms), duty_cycle(duty_cycle), phase_ratio(phase_ratio), brightness(brightness), is_white(is_white) {
 
-    this->ledStrip.setWhite();
+    if (is_white)
+      this->ledStrip.setWhite();
+    else
+      this->ledStrip.setColour();
     this->ledStrip.setBrightness(brightness);
     this->last_time = 0;
     this->delay = this->period * this->phase_ratio;
@@ -108,19 +112,19 @@ public:
   }
 
   void update(unsigned long time_ms) override {
-    Serial.println("Updating blink effect");
+    // Serial.println("Updating blink effect");
 
     unsigned long delta = time_ms - this->last_time;
-    
+
 
     if (delta < delay) {
-      Serial.println("Set low");
+      //Serial.println("Set low");
       this->ledStrip.setBrightness(0);
     } else if (delta < delay + this->period * this->duty_cycle) {  // in the high time of the duty cycle
-      Serial.println("Set high");
+      //Serial.println("Set high");
       this->ledStrip.setBrightness(this->brightness);
     } else if (delta < this->period) {  // in the low part of the duty cycle
-      Serial.println("Set low");
+      //Serial.println("Set low");
       this->ledStrip.setBrightness(0);
     } else {
       this->last_time = time_ms;  // time to move to the next period
@@ -138,7 +142,7 @@ public:
     Serial.println("Built solid white effect");
   }
   void update(unsigned long time_ms) override {
-    Serial.println("updating solid white effect");
+    //Serial.println("updating solid white effect");
     return;
   }
 };
@@ -151,7 +155,7 @@ public:
     this->ledStrip.setBrightness(brightness);
   }
   void update(unsigned long time_ms) override {
-    
+
     return;
   }
 };

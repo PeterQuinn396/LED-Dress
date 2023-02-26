@@ -43,6 +43,7 @@ public:
     for (int i = 0; i < num_strips; i++) {
       effectArray[i] = new SolidWhiteEffect(ledStripArray[i], brightness);
     }
+    Serial.println("Build solid white pattern");
   }
 };
 
@@ -54,30 +55,34 @@ public:
     for (int i = 0; i < num_strips; i++) {
       effectArray[i] = new SolidColourEffect(ledStripArray[i], brightness);
     }
+    Serial.println("Build solid color pattern");
   }
 };
 
 class SequencePattern : public Pattern {
 
 public:
-  SequencePattern(LEDStrip ledStripArray[], int num_strips, int period_ms, uint8_t brightness)
+  SequencePattern(LEDStrip ledStripArray[], int num_strips, int period_ms, uint8_t brightness, bool is_white)
     : Pattern(num_strips) {
 
     float duty_cycle = 1.0 / num_strips;
     float phase_ratio = 1.0 / num_strips;
 
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = new BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i * phase_ratio, brightness);
+      effectArray[i] = new BlinkEffect(ledStripArray[i], period_ms, duty_cycle, i * phase_ratio, brightness, is_white);
     }
+    Serial.println("Built sequence pattern");
   }
 };
 
 class WavePattern : public Pattern {
 public:
-  WavePattern(LEDStrip ledStripArray[], int num_strips, float frequency)
+  WavePattern(LEDStrip ledStripArray[], int num_strips, float frequency, bool is_white)
     : Pattern(num_strips) {
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = new WhiteFadeEffect(ledStripArray[i], frequency, i * 360.0 / num_strips);
+      effectArray[i] = new FadeEffect(ledStripArray[i], frequency, i * 360.0 / num_strips, is_white);
     }
+    Serial.print("Built Wave, is_white ");
+    Serial.println(is_white);
   }
 };
