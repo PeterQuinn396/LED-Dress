@@ -133,29 +133,58 @@ public:
 };
 
 
-class SolidWhiteEffect : public Effect {
+class SolidEffect : public Effect {
+
 public:
-  SolidWhiteEffect(LEDStrip ledStrip, uint8_t brightness)
+  SolidEffect(LEDStrip ledStrip, uint8_t brightness, bool is_white)
     : Effect(ledStrip) {
-    this->ledStrip.setWhite();
+    if (is_white) {
+      this->ledStrip.setWhite();
+      Serial.println("Built solid white effect");
+    } else {
+      this->ledStrip.setColour();
+      Serial.println("Built solid colour effect");
+    }
     this->ledStrip.setBrightness(brightness);
-    Serial.println("Built solid white effect");
   }
   void update(unsigned long time_ms) override {
-    //Serial.println("updating solid white effect");
+    //Serial.println("updating solid effect");
     return;
   }
 };
 
-class SolidColourEffect : public Effect {
+
+class ChaosEffect : public Effect {
+
+private:
+  float speed;     // how quickly the effect is modulated, should be around .002
+  float rng_seed;  // init conditions for the pattern, should be [-10, 10]
+
 public:
-  SolidColourEffect(LEDStrip ledStrip, uint8_t brightness)
-    : Effect(ledStrip) {
-    this->ledStrip.setColour();
-    this->ledStrip.setBrightness(brightness);
+  ChaosEffect(LEDStrip ledStrip, float speed, float rng_seed)
+    : Effect(ledStrip), speed(speed), rng_seed(rng_seed) {
+
+    this->ledStrip.setWhite();
+    this->ledStrip.setBrightness(255);
+    Serial.println("Built chaos effect");
   }
+
   void update(unsigned long time_ms) override {
 
+    float x = time_ms % 120000;  // repeats every 2 mins, just so pattern doesn't degenerate
+    x = this->speed * x;
+
+    float sin_x = sin(pow(x, 1.1));
+    float r = sin(sin_x + x + this->rng_seed);
+
+    if (r > 0) {
+      this->ledStrip.setWhite();
+    } else {
+      this->ledStrip.setColour();
+    }
+
+    int brightness = int(abs(255*r));
+    this->ledStrip.setBrightness(brightness);
     return;
   }
 };

@@ -35,29 +35,18 @@ public:
   }
 };
 
-class SolidWhitePattern : public Pattern {
+class SolidPattern : public Pattern {
 
 public:
-  SolidWhitePattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness)
+  SolidPattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness, bool is_white)
     : Pattern(num_strips) {
     for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = new SolidWhiteEffect(ledStripArray[i], brightness);
+      effectArray[i] = new SolidEffect(ledStripArray[i], brightness, is_white);
     }
-    Serial.println("Build solid white pattern");
+    Serial.println("Build solid pattern");
   }
 };
 
-class SolidColourPattern : public Pattern {
-
-public:
-  SolidColourPattern(LEDStrip ledStripArray[], int num_strips, uint8_t brightness)
-    : Pattern(num_strips) {
-    for (int i = 0; i < num_strips; i++) {
-      effectArray[i] = new SolidColourEffect(ledStripArray[i], brightness);
-    }
-    Serial.println("Build solid color pattern");
-  }
-};
 
 class SequencePattern : public Pattern {
 
@@ -84,5 +73,18 @@ public:
     }
     Serial.print("Built Wave, is_white ");
     Serial.println(is_white);
+  }
+};
+
+
+class ChaosPattern : public Pattern {
+public:
+  ChaosPattern(LEDStrip ledStripArray[], int num_strips)
+    : Pattern(num_strips) {
+    float speed = .002;  
+    for (int i = 0; i < num_strips; i++) {
+      effectArray[i] = new ChaosEffect(ledStripArray[i], speed, float(i));
+    }
+    Serial.println("Built chaos pattern");
   }
 };
