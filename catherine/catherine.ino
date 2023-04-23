@@ -4,8 +4,8 @@
 
 // touch settings
 #define TOUCH_PIN_MODE 4    // GPIO 4 is a touch pin, will toggle active pattern
-#define TOUCH_PIN_COLOR 15  // GPIO 0 is a touch pin, will toggle colour
-#define TOUCH_THRESHOLD 50  // values less than this are touches, the normal untouched value is ~70
+#define TOUCH_PIN_COLOR 15  // GPIO 15 is a touch pin, will toggle colour
+#define TOUCH_THRESHOLD 20  // values less than this are touches, the normal untouched value is ~70
 #define TOUCH_DELAY_MS 350  // wait this long between touch detections, to avoid multiple detections for same press
 unsigned long last_touch_time = 0;
 
@@ -72,6 +72,9 @@ void loop() {
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
     activePattern = selectActivePattern(mode, is_white, ledStripArray, NUMBER_OF_STRIPS);
   }
+
+  int val = touchRead(TOUCH_PIN_COLOR);
+  Serial.println(val);
 
   activePattern->update(time_ms);  // continually update the active pattern
   delay(1);                        // give processor some chill time, may remove
