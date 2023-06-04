@@ -5,7 +5,8 @@
 // touch settings
 #define TOUCH_PIN_MODE 4    // GPIO 4 is a touch pin, will toggle active pattern
 #define TOUCH_PIN_COLOR 15  // GPIO 15 is a touch pin, will toggle colour
-#define TOUCH_THRESHOLD 20  // values less than this are touches, the normal untouched value is ~70
+#define TOUCH_THRESHOLD_SHORT 20  // values less than this are touches, the normal untouched value is ~70
+#define TOUCH_THRESHOLD_LONG 15 // the longer wire is baselined lower values
 #define TOUCH_DELAY_MS 350  // wait this long between touch detections, to avoid multiple detections for same press
 unsigned long last_touch_time = 0;
 
@@ -60,14 +61,14 @@ void setup() {
 
 void loop() {
   unsigned long time_ms = millis();  // get current time
-  if (gotTouch(TOUCH_PIN_MODE)) {    // check if we got a touch, if we did, change mode
+  if (gotTouch(TOUCH_PIN_MODE, TOUCH_THRESHOLD_SHORT)) {    // check if we got a touch, if we did, change mode
     mode++;
     mode %= TOTAL_MODES;
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
     activePattern = selectActivePattern(mode, is_white, ledStripArray, NUMBER_OF_STRIPS);
   }
 
-  if (gotTouch(TOUCH_PIN_COLOR)) {  // check if we got a touch, if we did, change mode
+  if (gotTouch(TOUCH_PIN_COLOR, TOUCH_THRESHOLD_LONG)) {  // check if we got a touch, if we did, change mode
     is_white = !is_white;
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
     activePattern = selectActivePattern(mode, is_white, ledStripArray, NUMBER_OF_STRIPS);
@@ -131,13 +132,13 @@ Pattern* selectActivePattern(int mode, bool is_white, LEDStrip ledStripArray[], 
   }
 }
 
-bool gotTouch(int pin) {
+bool gotTouch(int pin, int threshold) {
   // check if the touch mode sensor has been triggered
   int val = touchRead(pin);
   // Serial.print("------------ ");
   // Serial.println(val);
   unsigned long current_time = millis();
-  if (val < TOUCH_THRESHOLD && current_time - last_touch_time > TOUCH_DELAY_MS) {
+  if (val < threshold && current_time - last_touch_time > TOUCH_DELAY_MS) {
     last_touch_time = current_time;
 
     Serial.print("Got touch for pin ");
