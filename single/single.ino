@@ -11,31 +11,34 @@ unsigned long last_touch_time = 0;
 
 // LED strip settings
 #define STRIP_0_WHITE 13
-//#define STRIP_0_COLOUR 14
+#define STRIP_0_COLOUR 14
 
 #define STRIP_1_WHITE 26
-//#define STRIP_1_COLOUR 27
+#define STRIP_1_COLOUR 27
 
 #define STRIP_2_WHITE 16
-//#define STRIP_2_COLOUR 17
+#define STRIP_2_COLOUR 17
 
 #define STRIP_3_WHITE 18
-//#define STRIP_3_COLOUR 19
+#define STRIP_3_COLOUR 19
 
 #define STRIP_4_WHITE 32
-//#define STRIP_4_COLOUR 33
+#define STRIP_4_COLOUR 33
 
 #define STRIP_5_WHITE 22
-//#define STRIP_5_COLOUR 23
+#define STRIP_5_COLOUR 23
+
+#define BUTTON_PIN 0
+
 
 #define NUMBER_OF_STRIPS 6
 LEDStrip ledStripArray[NUMBER_OF_STRIPS] = {
-  LEDStrip(STRIP_0_WHITE, 0),
-  LEDStrip(STRIP_1_WHITE, 0),
-  LEDStrip(STRIP_2_WHITE, 0),
-  LEDStrip(STRIP_3_WHITE, 0),
-  LEDStrip(STRIP_4_WHITE, 0),
-  LEDStrip(STRIP_5_WHITE, 0),
+  LEDStrip(STRIP_0_WHITE, STRIP_0_COLOUR),
+  LEDStrip(STRIP_1_WHITE, STRIP_1_COLOUR),
+  LEDStrip(STRIP_2_WHITE, STRIP_2_COLOUR),
+  LEDStrip(STRIP_3_WHITE, STRIP_3_COLOUR),
+  LEDStrip(STRIP_4_WHITE, STRIP_4_COLOUR),
+  LEDStrip(STRIP_5_WHITE, STRIP_5_COLOUR),
 };
 
 Pattern* activePattern;
@@ -50,6 +53,8 @@ void setup() {
 
   pinMode(TOUCH_PIN_MODE, INPUT);
   pinMode(TOUCH_PIN_COLOR, INPUT);
+  pinMode(BUTTON_PIN, INPUT); 
+  pinMode(LED_BUILTIN, OUTPUT);
 
   // TODO: disable wifi and bluetooth, reduces power draw
   mode = 0;
@@ -60,15 +65,18 @@ void setup() {
 
 void loop() {
   unsigned long time_ms = millis();  // get current time
-  if (gotTouch(TOUCH_PIN_MODE)) {    // check if we got a touch, if we did, change mode
+  
+  if (gotButton(BUTTON_PIN)) {    // check if we got a touch, if we did, change mode
     mode++;
     mode %= TOTAL_MODES;
     delete activePattern;  // delete data that will have its reference overwritten, prevent memory leak
     activePattern = selectActivePattern(mode, is_white, ledStripArray, NUMBER_OF_STRIPS);
+    digitalWrite(LED_BUILTIN, HIGH);
   }
 
   activePattern->update(time_ms);  // continually update the active pattern
   delay(1);                        // give processor some chill time, may remove
+  digitalWrite(LED_BUILTIN, LOW);
 }
 
 
@@ -80,14 +88,14 @@ Pattern* selectActivePattern(int mode, bool is_white, LEDStrip ledStripArray[], 
     case 0:  // solid white or colour
       {
         uint8_t brightness = 255;
-        Serial.println("Selecting mode 1");
+        Serial.println("Selecting mode 0");
         pattern = new SolidPattern(ledStripArray, num_strips, brightness, is_white);
         return pattern;
       }
     case 1:  // off
       {
         uint8_t brightness = 0;
-        Serial.println("Selecting mode 0");
+        Serial.println("Selecting mode 1");
         pattern = new SolidPattern(ledStripArray, num_strips, brightness, is_white);
         return pattern;
       }
@@ -122,13 +130,13 @@ Pattern* selectActivePattern(int mode, bool is_white, LEDStrip ledStripArray[], 
   }
 }
 
-bool gotTouch(int pin) {
+bool gotButton(int pin) {
   // check if the touch mode sensor has been triggered
-  int val = touchRead(pin);
+  int val = digitalRead(pin); // 1 if open, 0 if closed
   // Serial.print("------------ ");
   // Serial.println(val);
   unsigned long current_time = millis();
-  if (val < TOUCH_THRESHOLD && current_time - last_touch_time > TOUCH_DELAY_MS) {
+  if (!val && current_time - last_touch_time > TOUCH_DELAY_MS) {
     last_touch_time = current_time;
     Serial.print("Got touch for pin ");
     Serial.println(pin);
