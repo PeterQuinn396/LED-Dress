@@ -17,7 +17,7 @@ protected:
   Effect** effectArray;
 
 public:
-  Pattern(int num_strips)  // must be overridden in derived classes to create the appropirate
+  Pattern(int num_strips)  // must be overridden in derived classes to create the appropriate
                            // effectArray from additional args in the constructor
     : num_strips(num_strips) {
     this->effectArray = new Effect*[num_strips];
@@ -43,7 +43,7 @@ public:
     for (int i = 0; i < num_strips; i++) {
       effectArray[i] = new SolidEffect(ledStripArray[i], brightness, is_white);
     }
-    Serial.println("Build solid pattern");
+    Serial.println("Built solid pattern");
   }
 };
 
@@ -81,7 +81,7 @@ class ChaosPattern : public Pattern {
 public:
   ChaosPattern(LEDStrip ledStripArray[], int num_strips)
     : Pattern(num_strips) {
-    float speed = .002;  
+    float speed = .002;
     for (int i = 0; i < num_strips; i++) {
       effectArray[i] = new ChaosEffect(ledStripArray[i], speed, float(i));
     }
